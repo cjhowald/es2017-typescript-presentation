@@ -25,427 +25,216 @@
 <div class="reveal">
     <div class="slides">
         <section>
-            <h1>Webpack</h1>
-            <h2>Introduction and guide</h2>
+            <h1>ES2017 & Typescript</h1>
         </section>
         <section>
-            <section><h2>What is webpack?</h2></section>
+            <section><h2>What is ES2017?</h2></section>
             <section>
-                <h2>Module bundler</h2>
-                <ol>
-                    <li>processes app</li>
-                    <li>builds a dependency graph</li>
-                    <li>packages into one or more bundles</li>
-                </ol>
-            </section>
-        </section>
-        <section>
-            <section>
-                <h2>Why use it?</h2>
-                <p class="fragment">A brief history of JS dependencies</p>
-            </section>
-            <section><h2>Everything in the &lt;head&gt;</h2></section>
-            <section data-markdown>
-                <textarea data-template>
-                ```
-                <head>
-                    <script src="jquery.min.js"></script>
-                    <script src="bootstrap.min.js"></script>
-                    <script src="angular.min.js"></script>
-                </head>
-                ```
-                </textarea>
-            </section>
-            <section>
-                <h2>Build</h2>
-                <pre><code class="hljs" data-trim>
-            // build-script.js
-            var scripts = [
-            'jquery.min.js',
-            'jquery.some.plugin.js',
-            'main.js'
-            ].concat().uglify().writeTo('bundle.js');
-            &lt;script src=&quot;bundle.js&quot;&gt;&lt;/script&gt;
-            </code></pre>
-            </section>
-            <section>
-                <h2>Task Runners</h2>
                 <ul>
-                    <li>Grunt</li>
-                    <li>Gulp</li>
+                    <li>ECMAScript (ES) = language specification</li>
+                    <li>JavaScript (JS) = language implementation</li>
                 </ul>
             </section>
             <section>
-                <h2>Gulp</h2>
-                <h3>The beginning</h3>
-                <pre><code class="hljs javascript" data-trim>
-gulp.task('scripts', function () {
-  return gulp.src(path.join(conf.paths.src, '/**/*.js'))
-    .pipe($.jshint())
-    .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.size());
-});
-            </code></pre>
-            </section>
-            <section>
-                <h2>Gulp</h2>
-                <h3>The reckoning</h3>
-                <pre><code class="hljs javascript" data-trim>
-gulp.task('html', ['inject', 'partials'], function () {
-  var partialsInjectFile = gulp.src(path.join(conf.paths.tmp, '/partials/templateCacheHtml.js'), { read: false });
-  var partialsInjectOptions = {
-    starttag: '<!-- inject:partials -->',
-    ignorePath: path.join(conf.paths.tmp, '/partials'),
-    addRootSlash: false
-  };
-
-  var htmlFilter = $.filter('*.html');
-  var jsFilter = $.filter('**/*.js');
-  var cssFilter = $.filter('**/*.css');
-  var assets;
-
-  return gulp.src(path.join(conf.paths.tmp, '/serve/*.html'))
-    .pipe($.inject(partialsInjectFile, partialsInjectOptions))
-    .pipe(assets = $.useref.assets())
-    .pipe(jsFilter)
-    .pipe($.ngAnnotate())
-    // .pipe($.uglify({ preserveComments: $.uglifySaveLicense })).on('error', conf.errorHandler('Uglify'))
-    .pipe(jsFilter.restore())
-    .pipe(cssFilter)
-    .pipe($.csso())
-    .pipe(cssFilter.restore())
-    .pipe(assets.restore())
-    .pipe($.useref())
-    .pipe(htmlFilter)
-    .pipe($.minifyHtml({
-      empty: true,
-      spare: true,
-      quotes: true,
-      conditionals: true
-    }))
-    .pipe(htmlFilter.restore())
-    .pipe(gulp.dest(path.join(conf.paths.dist, '/')))
-    .pipe($.size({ title: path.join(conf.paths.dist, '/'), showFiles: true }));
-});
-            </code></pre>
-            </section>
-            <section>
-                <h2>Enter webpack</h2>
+                <h2>ES Releases</h2>
                 <ul>
-                    <li>Declarative</li>
-                    <li>Dependency graph</li>
-                    <li>Understands CommonJS, AMD, UMD, and ES6 modules</li>
-                    <li>Dead asset elimination, code splitting, asset processing, easy stable prod deploys, cache
-                        busting
+                    <li class="fragment"><strong>1999: ES5</strong> - JS as we know it</li>
+                    <li class="fragment"><strong>2015: ES6 (ES2015)</strong>: arrows, classes, object literals, template
+                        string, destructuring, default + rest + spread, let & const, iterators, generators, modules,
+                        promises...
                     </li>
-                    <li>Works with any type of asset (JS, CSS, images, fonts)</li>
-                    <li>Development server</li>
-                    <li>Large, growing community</li>
-                    <li>Great <a href="https://webpack.js.org/">documentation</a></li>
+                    <li class="fragment"><strong>2016: ES7 (ES2016)</strong>: array.includes, **</li>
+                    <li class="fragment"><strong>2017: ES8 (ES2017)</strong>: async/await, string padding,
+                        object.values/entries/getOwnPropertyDescriptors, trailing commas
+                    </li>
                 </ul>
+            </section>
+            <section>
+                <h2>Example - ES5</h2>
+                <pre><code class="hljs javascript">function envService($http, $q, logger, apiEndpoint) {
+    var service = {};
+    service.getEnvVersion = getEnvVersion;
+    return service;
+
+    function getEnvVersion () {
+      return $http
+        .get(apiEndpoint + '/version', {
+          transformResponse: function(data) { return data; }
+        })
+        .then(function(response) {
+          return response.data;
+        })
+        .catch(function(response) {
+          logger.error('Failed to load env version – ' + response.data + ' / ' + response.status + '. Please try refreshing the page.');
+          return $q.reject(response);
+        });
+    }
+  }
+}
+                </code></pre>
+            </section>
+            <section>
+                <h2>Example - ES6</h2>
+                <pre><code class="hljs javascript">class EnvService {
+
+  constructor($http, $q, logger, apiEndpoint) {
+    'ngInject';
+    this.$http = $http;
+    this.$q = $q;
+    this.logger = logger;
+    this.apiEndpoint = apiEndpoint;
+
+    this.handleError = property => response => {
+      this.logger.error(`Failed to load env ${property} – ${response.data} / ${response.status}. Please try refreshing the page.`);
+      return this.$q.reject(response);
+    }
+  }
+
+  getEnvVersion() {
+    return this.$http
+      .get(this.apiEndpoint + '/version', {transformResponse: data => data})
+      .then(({data}) => data)
+      .catch(this.handleError('version'));
+  }
+}
+                </code></pre>
+            </section>
+            <section>
+                <h2>Conclusions</h2>
+                <ul>
+                    <li>modern (e.g. classes, template strings, constants, )</li>
+                    <li>concise (arrows, destructuring, rest & spread)</li>
+                    <li>standardized (e.g. promises, modules, string & object methods)</li>
+                </ul>
+            </section>
+            <section><h2>How do we use it?</h2>
+                <ol>
+                    <li class="fragment">Install & configure Babel (via webpack loader)</li>
+                    <li class="fragment">Start using ES2015/6/7 features in JS code*</li>
+                </ol>
+                <p class="fragment">* some features require a polyfill or special preset (e.g. Array.includes)</p>
             </section>
         </section>
         <section>
+            <section>
+                <h2>Typescript</h2>
+            </section>
+            <section>
+                <h2>What is Typescript</h2>
+                <p class="fragment">A typed <strong>superset</strong> of JavaScript that compiles to plain JavaScript
+                </p>
+            </section>
+            <section>
+                <h2>Typed Superset of JavaScript</h2>
+                <ul>
+                    <li class="fragment">All current JS is valid TS</li>
+                    <li class="fragment">Supports ES2017+</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Compiles to plain JavaScript</h2>
+                <ul>
+                    <li class="fragment">Transpilation + type checking</li>
+                    <li class="fragment">Runtime errors => compile-time errors</li>
+                </ul>
+            </section>
             <section>
                 <h2>Concepts</h2>
+                <ul>
+                    <li>Compiler</li>
+                    <li>Type annotation (optional)</li>
+                    <li>Types</li>
+                    <li>Interfaces</li>
+                    <li>Type Inference</li>
+                </ul>
             </section>
             <section>
-                <h2>Entry</h2>
-                <pre><code class="hljs javascript" data-trim>
-  entry: './path/to/my/entry/file.js'
+                <h2>Compiler</h2>
+                <ul>
+                    <li>input .ts files</li>
+                    <li>output .js files</li>
+                    <li>compiler errors</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Optional Type Annotation</h2>
+                <pre><code class="hljs typescript" data-trim>function greeter(person: string) {
+    return "Hello, " + person;
+}
+                </code></pre>
+                <pre class="fragment"><code class="hljs typescript" data-trim>greeter([1,2,3])
+                </code></pre>
+                <pre class="fragment"><code class="hljs shell" data-trim>error TS2345: Argument of type 'number[]' is not assignable to parameter of type 'string'.
                 </code></pre>
             </section>
             <section>
-                <h2>Output</h2>
-                <pre><code class="hljs javascript" data-trim>
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'my-first-webpack.bundle.js'
-  }
+                <h2>Types</h2>
+                <ul>
+                    <li class="fragment">primitives: boolean, number, string</li>
+                    <li class="fragment">array (e.g. number[] or Array&lt;number&gt;)</li>
+                    <li class="fragment">tuple (e.g. [string, number]</li>
+                    <li class="fragment">enum (enum Color {Red, Green, Blue})</li>
+                    <li class="fragment">any</li>
+                    <li class="fragment">void</li>
+                    <li class="fragment">undefined & null</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Interfaces</h2>
+                <pre><code class="hljs typescript" data-trim>
+interface Person {
+    name: string;
+}
+                </code></pre><pre class="fragment"><code class="hljs typescript" data-trim>
+function greeter(person: Person) {
+    return "Hello, " + person.name;
+}
+                </code></pre>
+                <pre class="fragment"><code class="hljs typescript" data-trim>
+interface Person {
+    name: string;
+    nickname?: string;
+}
+                </code></pre>
+                <pre class="fragment"><code class="hljs typescript" data-trim>
+function greeter(person: Person) {
+    return "Hello, " + person.nickname || person.name;
+}
                 </code></pre>
             </section>
             <section>
-                <h2>Loaders</h2>
-                <pre><code class="hljs javascript" data-trim>
-  module: {
-    rules: [
-      { test: /\.txt$/, use: 'raw-loader' }
-    ]
-  }
-                </code></pre>
-            </section>
-            <section>
-                <h2>Plugins</h2>
-                <pre><code class="hljs javascript" data-trim>
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin(),
-    new HtmlWebpackPlugin({template: './src/index.html'})
-  ]      </code></pre>
+                <h2>Type Inference</h2>
+                <ul>
+                    <li>Structural subtyping</li>
+                    <li>Compare type members to determine equality</li>
+                </ul>
             </section>
             <section>
                 <h2>Example</h2>
-                <p>webpack.conf.js</p>
-                <pre><code class="hljs javascript">const HtmlWebpackPlugin = require('html-webpack-plugin'); //installed via npm
-const webpack = require('webpack'); //to access built-in plugins
-const path = require('path');
-
-const config = {
-  entry: './path/to/my/entry/file.js',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'my-first-webpack.bundle.js'
-  },
-  module: {
-    rules: [
-      { test: /\.txt$/, use: 'raw-loader' }
-    ]
-  },
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin(),
-    new HtmlWebpackPlugin({template: './src/index.html'})
-  ]
-};
-
-module.exports = config;
-                </code></pre>
+            </section>
+            <section>
+                <h2>Conclusion</h2>
+                <ul>
+                    <li>All the benefits of ES2017+</li>
+                    <li>Static types</li>
+                    <li>Compile-time error handling</li>
+                    <li>Type inference</li>
+                    <li>Opt-in</li>
+                    <li>Great IDE support</li>
+                </ul>
+            </section>
+            <section>
+                <h2>How do we use it?</h2>
+                <ol>
+                    <li>Install typescript compiler (via webpack loader)</li>
+                    <li>Rename files .js => .ts</li>
+                    <li>Fix compiler errors</li>
+                    <li>Start using ES2015 features & adding type annotations</li>
+                </ol>
             </section>
         </section>
-        <section>
-            <section><h2>Show me the code!</h2></section>
-            <section>index.js
-                <pre><code class="hljs" data-trim>
-import _ from 'lodash';
-
-function component() {
-    var element = document.createElement('div');
-
-    element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-
-    return element;
-}
-
-document.body.appendChild(component());
-                </code></pre>
-            </section>
-            <section>index.html
-                <pre><code class="hljs" data-trim>
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;title&gt;Getting Started&lt;/title&gt;
-        &lt;script src=&quot;https://unpkg.com/lodash@4.16.6&quot;&gt;&lt;/script&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        &lt;script src=&quot;bundle.js&quot;&gt;&lt;/script&gt;
-    &lt;/body&gt;
-&lt;/html&gt;
-                </code></pre>
-            </section>
-            <section>webpack.conf.js
-            <pre><code class="hljs" data-trim>const path = require('path');
-
-module.exports = {
-  entry: './src/index.js',
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
-  }
-};
-                </code></pre>
-            </section>
-            <section>package.json
-                <pre><code class="hljs" data-trim>
-{
-  ...
-  "scripts": {
-    "build": "webpack"
-  },
-  ...
-}
-                </code></pre>
-            </section>
-            <section>command line
-                <pre><code class="hljs" data-trim>
-npm i lodash
-npm i -D webpack
-npm build
-                </code></pre>
-            </section>
+        <section><h2>Questions and Discussion</h2>
         </section>
-        <section>
-            <section><h2>Real world example</h2></section>
-            <section><pre><code class="hljs" data-trim>
-const path = require('path');
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-module.exports = {
-  entry: './src/app/app.module.js', // it all starts here
-  devtool: 'cheap-module-source-map',
-  output: { // generate bundle at ./dist/bundle.js
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
-  },
-  devServer: { // webpack-dev-server for local development, serves up dist on port 3000 with goodies like live reload, in-memory file server
-    contentBase: './dist',
-    port: 3000
-  },
-  module: {
-    rules: [ // NOTE: for rules with multiple loaders, loaders are applied in reverse order (i.e. right to left or bottom to top depending on the formatting)
-      {
-        test: /\.js$/,
-        loaders: [
-          'babel-loader', // compile es2015+ code down to es5, currently only being used for angularjs-annotate-plugin
-          'required-loader?', // used to require all templates in app.module.js
-          {loader: 'eslint-loader', options: {configFile: './.eslintrc'}}
-        ],
-        exclude: /node_modules/
-      },
-      {
-        test: /\.scss$/,
-        use: ['style-loader', // creates style nodes from JS strings
-          {
-            loader: 'css-loader', // translates CSS into CommonJS
-            options: {
-              alias: {
-                '../fonts/bootstrap': 'bootstrap-sass/assets/fonts/bootstrap' // tell bootstrap where to find its fonts
-              }
-            }
-          },
-          'sass-loader' // compiles Sass to CSS
-        ]
-      },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          'file-loader' // process image files, saving a version to dist and replacing the reference
-        ]
-      },
-      {
-        test: /\.html$/,
-        use: [
-          "ngtemplate-loader?relativeTo=" + (path.resolve(__dirname, './src')) + "/", // push html strings to angular template cache
-          'html-loader' // parse html as string
-        ],
-        exclude: /index\.html/ // index.html is loaded by HtmlWebpackPlugin (below) and we don't want any special handling
-      },
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: [
-          'file-loader' // process fonts, saving a version to dist and replacing the reference
-        ]
-      }
-    ]
-  },
-  plugins: [
-    new webpack.ProvidePlugin({ // make some globals available globally for certain dependencies that require them
-      $: 'jquery',
-      'window.jQuery': 'jquery',
-      'moment': 'moment',
-      'Selectize': 'selectize'
-    }),
-    new CopyWebpackPlugin([{from: 'src/assets', to: 'assets'}]), // copy assets folder from src to dist
-    new HtmlWebpackPlugin({ // generate dist/index.html using src/index.html as a template and injecting a link to the bundle
-      template: 'src/index.html'
-    }),
-    new webpack.DefinePlugin({
-      VERSION: JSON.stringify(require("./package.json").version)
-    })
-  ]
-};
-
-                </code></pre></section><section><pre><code class="hljs" data-trim>
-const path = require('path');
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-                </code></pre></section>
-            <section><pre><code class="hljs" data-trim>
-entry: './src/app/app.module.js', // it all starts here
-                </code></pre></section>
-            <section><pre><code class="hljs" data-trim>
-devtool: 'cheap-module-source-map',
-                </code></pre></section>
-            <section><pre><code class="hljs" data-trim>
-output: { // generate bundle at ./dist/bundle.js
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
-},
-                </code></pre></section>
-            <section><pre><code class="hljs" data-trim>
-devServer: { // webpack-dev-server for local development, serves up dist on port 3000 with goodies like live reload, in-memory file server
-    contentBase: './dist',
-    port: 3000
-},
-                </code></pre></section>
-            <section><pre><code class="hljs" data-trim>
- module: {
-    rules: [ // NOTE: for rules with multiple loaders, loaders are applied in reverse order (i.e. right to left or bottom to top depending on the formatting)
-      {
-        test: /\.js$/,
-        loaders: [
-          'babel-loader', // compile es2015+ code down to es5, currently only being used for angularjs-annotate-plugin
-          'required-loader?', // used to require all templates in app.module.js
-          {loader: 'eslint-loader', options: {configFile: './.eslintrc'}}
-        ],
-        exclude: /node_modules/
-      },
-      {
-        test: /\.scss$/,
-        use: ['style-loader', // creates style nodes from JS strings
-          {
-            loader: 'css-loader', // translates CSS into CommonJS
-            options: {
-              alias: {
-                '../fonts/bootstrap': 'bootstrap-sass/assets/fonts/bootstrap' // tell bootstrap where to find its fonts
-              }
-            }
-          },
-          'sass-loader' // compiles Sass to CSS
-        ]
-      },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          'file-loader' // process image files, saving a version to dist and replacing the reference
-        ]
-      },
-      {
-        test: /\.html$/,
-        use: [
-          "ngtemplate-loader?relativeTo=" + (path.resolve(__dirname, './src')) + "/", // push html strings to angular template cache
-          'html-loader' // parse html as string
-        ],
-        exclude: /index\.html/ // index.html is loaded by HtmlWebpackPlugin (below) and we don't want any special handling
-      },
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: [
-          'file-loader' // process fonts, saving a version to dist and replacing the reference
-        ]
-      }
-    ]
-  },
-                </code></pre></section>
-            <section><pre><code class="hljs" data-trim>
- plugins: [
-    new webpack.ProvidePlugin({ // make some globals available globally for certain dependencies that require them
-      $: 'jquery',
-      'window.jQuery': 'jquery',
-      'moment': 'moment',
-      'Selectize': 'selectize'
-    }),
-    new CopyWebpackPlugin([{from: 'src/assets', to: 'assets'}]), // copy assets folder from src to dist
-    new HtmlWebpackPlugin({ // generate dist/index.html using src/index.html as a template and injecting a link to the bundle
-      template: 'src/index.html'
-    }),
-    new webpack.DefinePlugin({
-      VERSION: JSON.stringify(require("./package.json").version)
-    })
-]
-                </code></pre></section>
-        </section>
-        <section><h2>Questions?</h2></section>
     </div>
 </div>
 

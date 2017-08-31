@@ -1,19 +1,19 @@
 {
-  "name": "webpack-into",
+  "name": "typescript-es2015",
   "version": "1.0.0",
-  "description": "Webpack intro using reveal.js",
-  "homepage": "https://github.com/cjhowald/webpack-intro",
+  "description": "Typescript & ES2015 presentation using reveal.js",
+  "homepage": "https://github.com/cjhowald/es2017-typescript-presentation",
   "scripts": {
     "test": "grunt test",
     "start": "grunt serve",
     "build": "grunt"
   },
   "author": {
-    "name": "Colin Howald",
+    "name": "Colin Howald"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cjhowald/webpack-intro.git"
+    "url": "https://github.com/cjhowald/es2017-typescript-presentation.git"
   },
   "engines": {
     "node": ">=4.0.0"

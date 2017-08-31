@@ -1,1 +1,1 @@
-Webpack intro presentation using reveal.js.
+ES2017 and Typescript presentation using reveal.js.
